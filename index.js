@@ -296,10 +296,13 @@ function sendGeneric2Message(sender) {
 
 function sendQuickReply(sender){
 	let messageData = {
+		"recipient":{
+			"id":"USER_ID"
+		},
 		 "message":{
-    "text":"Pick a color:",
-    "quick_replies":[
-      {
+  		  "text":"Pick a color:",
+  		  "quick_replies":[
+   	   {
         "content_type":"text",
         "title":"Red",
         "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED",
