@@ -321,7 +321,7 @@ function sendQuickReply(recipientId){
     }
   };
 
-  callSendAPI(messageData);
+  //callSendAPI(messageData);
 }
 
 /*
@@ -486,6 +486,7 @@ app.listen(app.get('port'), function () {
 	console.log('running on port', app.get('port'))
 })
 
+/*
 function callSendAPI(messageData) {
   request({
     uri: 'https://graph.facebook.com/v2.6/me/messages',
@@ -509,4 +510,4 @@ function callSendAPI(messageData) {
       console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
     }
   });  
-}
+}*/
