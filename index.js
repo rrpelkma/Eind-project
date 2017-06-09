@@ -296,8 +296,10 @@ function sendGeneric2Message(sender) {
 
 function sendQuickReply(sender){
 	let messageData = {
+		"attachment":{
 		"type":"template",
 		"payload":{
+			"template_type": "quick_replies",
    			"message":{
          		"text":"Pick a color:",
          	"quick_replies":[
@@ -313,8 +315,9 @@ function sendQuickReply(sender){
            		 }
          		]
     		 }
-  		}	
-	} 
+  			}	
+		} 
+	}
 }
 
 /*
