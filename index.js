@@ -398,6 +398,27 @@ function sendGeneric3Message(sender) {
 
 }
 
+function sendQuickReply(sender){
+	let messageData = {
+		 "message":{
+    "text":"Pick a color:",
+    "quick_replies":[
+      {
+        "content_type":"text",
+        "title":"Red",
+        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED",
+      //  "image_url":"http://petersfantastichats.com/img/red.png"
+      },
+      {
+        "content_type":"text",
+        "title":"Green",
+        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN",
+        //"image_url":"http://petersfantastichats.com/img/green.png"
+      	}
+   		 ]
+ 		}
+	}
+}
 
 function sendButtonMessage(sender, text){
 	let messagedata = {
