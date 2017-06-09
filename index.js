@@ -295,10 +295,10 @@ function sendGeneric2Message(sender) {
 }
 
 function sendQuickReply(sender){
-"data": {
-      "facebook":{
+"let messageData" = {
+      "message":{
          "text":"Pick a color:",
-         "quick_replies":[
+         "quick_replies = new dynamic":[
             {
                "content_type": "text",
                "title": "Red",
