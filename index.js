@@ -8,7 +8,7 @@ const app = express()
 app.set('port', (process.env.PORT || 5000))
 
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
@@ -35,42 +35,79 @@ app.post('/webhook/', function (req, res) {
 		let sender = event.sender.id
 		if (event.message && event.message.text) {
 			let text = event.message.text
-			if (text === 'Generic'){ 
+			if (text === 'Generic') {
 				console.log("welcome to chatbot")
 				//sendGenericMessage(sender)
 				continue
 			}
-			if(text.includes("flow festival")){
+			if (text.includes("flow festival")) {
 				sendTextMessage(sender, "Leuk dat je naar het flow festival wil! Wat voor kaartjes zou je willen?")
 				sendGenericMessage(sender)
 			}
-			else if(text.includes("kaart")){ 
+			else if (text.includes("kaart")) {
 				sendTextMessage(sender, "Ik wil graag kaartjes voor je bestellen, probeer eens het flow festival!")
 			}
-			else if(text.includes("ticket")){ 
+			else if (text.includes("ticket")) {
 				sendTextMessage(sender, "Ik wil graag tickets voor je bestellen, probeer eens het flow festival!")
 			}
-			else if(text.includes("bewijs")){ 
+			else if (text.includes("bewijs")) {
 				sendTextMessage(sender, "Ik wil graag kaartjes voor je bestellen, probeer eens het flow festival!")
 			}
-			else if(text.includes("H")){
+			else if (text.includes("H")) {
 				sendTextMessage(sender, "Hoi, wat kan ik voor je doen?")
 			}
-			else{
+			else {
 				sendTextMessage(sender, "Sorry, ik begrijp je niet helemaal, probeer eens kaartjes te bestellen! ")
 			}
 		}
 		if (event.postback) {
 			let text = JSON.stringify(event.postback)
-			sendTextMessage(sender, "Hoe veel kaartjes wil je bestellen? Je kan er maximaal 5 per persoon bestellen!")
-			sendGeneric3Message(sender)
-			//sendTextMessage(sender, "Je bestelling is ontvangen! Als je via de onderstaande link betaalt sturen we ze direct naar je toe.")
-			//sendGeneric2Message(sender)
+			switch (event.postback.payload) {
+				case 'Regular':
+					sendTextMessage(sender, "Hoe veel kaartjes zou je willen?")
+					//sendGeneric3Message(sender)
+					sendQuickReply(sender)
+					break;
+
+				case 'Vip':
+					sendTextMessage(sender, "Hoe veel kaartjes zou je willen?")
+					sendGeneric3Message(sender)
+					break;
+
+				case '1':
+					sendTextMessage(sender, "Leuk dat je één kaartje wil!")
+					sendGeneric2Message(sender)
+					break;
+
+				case '2':
+					sendTextMessage(sender, "Leuk dat je twee kaartjes wil!")
+					sendGeneric2Message(sender)
+					break;
+
+				case '3':
+					sendTextMessage(sender, "Leuk dat je drie kaartjes wil!")
+					sendGeneric2Message(sender)
+					break;
+
+				case '4':
+					sendTextMessage(sender, "Leuk dat je vier kaartjes wil!")
+					sendGeneric2Message(sender)
+					break;
+
+				case '5':
+					sendTextMessage(sender, "Leuk dat je vijf kaartjes wil!")
+					sendGeneric2Message(sender)
+					break;
+			}
 			/*if (res.sendStatus(200) = true){ 
-			sendGeneric3Message(sender)
+			sendGeneric2Message(sender)
 			}*/
 			continue
 		}
+		/*if (event.postback.buttons.title = "1"){
+			let text = JSON.stringify(event.postback.buttons.title = "1")
+			sendTextMessage(sender,  "Veel plezier daar!")
+		}*/
 	}
 	res.sendStatus(200)
 })
@@ -78,20 +115,20 @@ app.post('/webhook/', function (req, res) {
 
 // recommended to inject access tokens as environmental variables, e.g.
 // const token = process.env.FB_PAGE_ACCESS_TOKEN
-var token = "EAAE5ZAU3E9SUBAI3CZAeABmdTlZBStDQ1G3pbfHLgZCZBxYtbJ5f4SiivxwZCgcPkGsS23ClceWrOcBFD0GEWal9x5SY6FMZC18oKZCOfcqZCdIix5bvOofC4GqdNpamaUdbu8Js6Ak1mCYjZAtVRlKaOSaTtS2yx0baKedbZAsFvaCFgZDZD"
+var token = "EAAE5ZAU3E9SUBAEvkZA5vGGvrUFgZCo2ZAkuuZCBV49K9Pgz2MQYDNUHaCZCvgWOGZBmVDhQVwVtiVXdZCDiVEiMWXzth75tMW7yQ7mhNHc9FfJZAZAd3ZAIsCCMaWOIQmcgSuvXCY4ZAxRlHM5U5CXBAXuUZBiDEpn7p1tEageMx9Er2ZBwZDZD"
 
 function sendTextMessage(sender, text) {
-	let messageData = { text:text }
-	
+	let messageData = { text: text }
+
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messages',
-		qs: {access_token:token},
+		qs: { access_token: token },
 		method: 'POST',
 		json: {
-			recipient: {id:sender},
+			recipient: { id: sender },
 			message: messageData,
 		}
-	}, function(error, response, body) {
+	}, function (error, response, body) {
 		if (error) {
 			console.log('Error sending messages: ', error)
 		} else if (response.body.error) {
@@ -126,7 +163,7 @@ function sendGenericMessage(sender) {
 
 						"title": "Regular tickets!",
 
-						"payload": "Leuk dat je Regular tickets wil kopen!"
+						"payload": "Regular"
 					}],
 
 				}, {
@@ -143,10 +180,10 @@ function sendGenericMessage(sender) {
 
 						"title": "VIP tickets!",
 
-						"payload": "Leuk dat je VIP tickets wil kopen!",
+						"payload": "Vip",
 
 					}],
-					
+
 				}]
 
 			}
@@ -159,19 +196,19 @@ function sendGenericMessage(sender) {
 
 		url: 'https://graph.facebook.com/v2.6/me/messages',
 
-		qs: {access_token:token},
+		qs: { access_token: token },
 
 		method: 'POST',
 
 		json: {
 
-			recipient: {id:sender},
+			recipient: { id: sender },
 
 			message: messageData,
 
 		}
 
-	}, function(error, response, body) {
+	}, function (error, response, body) {
 
 		if (error) {
 
@@ -218,147 +255,6 @@ function sendGeneric2Message(sender) {
 					}],
 
 				}]
-				
-			}
-
-		}
-
-	}
-	
-	request({
-
-		url: 'https://graph.facebook.com/v2.6/me/messages',
-
-		qs: {access_token:token},
-
-		method: 'POST',
-
-		json: {
-
-			recipient: {id:sender},
-
-			message: messageData,
-
-		}
-
-	}, function(error, response, body) {
-
-		if (error) {
-
-			console.log('Error sending messages: ', error)
-
-		} else if (response.body.error) {
-
-			console.log('Error: ', response.body.error)
-
-		}
-
-	})
-
-}
-
-/*function sendQuickReply(sender) {
-	let messageData = { "recipient":{
-    "id":"USER_ID"
-  },
-  "message":{
-    "text":"Pick a color:",
-    "quick_replies":[
-      {
-        "content_type":"text",
-        "title":"Red",
-        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED"
-      },
-      {
-        "content_type":"text",
-        "title":"Green",
-        "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_GREEN"
-      }
-    ]
-  }
-}
-	request({
-		url: 'https://graph.facebook.com/v2.6/me/messages',
-		qs: {access_token:token},
-		method: 'POST',
-		json: {
-			recipient: {id:sender},
-			message: messageData,
-		}
-	}, function(error, response, body) {
-		if (error) {
-			console.log('Error sending messages: ', error)
-		} else if (response.body.error) {
-			console.log('Error: ', response.body.error)
-		}
-	})
-}*/
-
-function sendGeneric3Message(sender) {
-
-	let messageData = {
-
-		"attachment": {
-
-			"type": "template",
-
-			"payload": {
-
-				"template_type": "generic",
-
-				"elements": [{
-
-					"title": "Aantal kaartjes",
-
-					"subtitle": "Ga naar rechts voor een grotere kaartkeuze!",
-
-					//"image_url": "https://www.visitljubljana.com/assets/gallery/flow.jpg",
-
-					"buttons": [{
-
-						"type": "postback",
-
-						"title": "1",
-
-						"payload": "Leuk dat je Regular tickets wil kopen!" //Hier kan link van payments??
-					},{
-						"type": "postback",
-
-						"title": "2",
-
-						"payload": "Leuk dat je Regular tickets wil kopen!" //Hier kan link van payments??
-					},{
-						"type": "postback",
-
-						"title": "3",
-
-						"payload": "Leuk dat je Regular tickets wil kopen!" //Hier kan link van payments??
-					}],
-
-				}, {
-
-					"title": "Aantal kaartjes",
-
-					"subtitle": "Ga naar links voor een kleinere kaartkeuze!",
-
-					//"image_url": "https://www.visitljubljana.com/assets/gallery/flow.jpg",
-
-					"buttons": [{
-
-						"type": "postback",
-
-						"title": "4",
-
-						"payload": "Leuk dat je VIP tickets wil kopen!",
-					},{
-						"type": "postback",
-
-						"title": "5",
-
-						"payload": "Leuk dat je Regular tickets wil kopen!" //Hier kan link van payments??
-					}],
-					
-				}]
 
 			}
 
@@ -370,19 +266,19 @@ function sendGeneric3Message(sender) {
 
 		url: 'https://graph.facebook.com/v2.6/me/messages',
 
-		qs: {access_token:token},
+		qs: { access_token: token },
 
 		method: 'POST',
 
 		json: {
 
-			recipient: {id:sender},
+			recipient: { id: sender },
 
 			message: messageData,
 
 		}
 
-	}, function(error, response, body) {
+	}, function (error, response, body) {
 
 		if (error) {
 
@@ -420,33 +316,164 @@ function sendQuickReply(sender){
 	}
 }
 
-function sendButtonMessage(sender, text){
-	let messagedata = {
-		"message":{
-    "attachment":{
-      "type":"template",
-      "payload":{
-        "template_type":"button",
-        "text":text,
-        "buttons":[
-          {
-            "type":"web_url",
-            "title":"Vip",
-            "payload":"Leuk dat je Vip tickets wil bestellen ! Hoe veel wil je er bestellen?"
-          },
-          {
-            "type":"postback",
-            "title":"Regular",
-            "payload":"Leuk dat je regular tickets wil bestellen! Hoe veel wil je er bestellen?"
-          }
-        ]
-      }
-    }
-  }
+/*
+function sendQuickReply(sender) {
+	let messageData = {
+		"attachment": {
+			"type": "quick_reply",
+			"payload":{
+			"message": {
+				"text": "Pick a color:",
+				"quick_replies": [
+					{
+						"content_type": "text",
+						"title": "Red",
+						"payload": "rood"
+					},
+					{
+						"content_type": "text",
+						"title": "Green",
+						"payload": "groen"
+					}
+				]
+				}
+			}
+		}
+	}
+}*/
+
+function sendGeneric3Message(sender) {
+
+	let messageData = {
+
+		"attachment": {
+
+			"type": "template",
+
+			"payload": {
+
+				"template_type": "generic",
+
+				"elements": [{
+
+					"title": "Aantal kaartjes",
+
+					"subtitle": "Ga naar rechts voor een grotere kaartkeuze!",
+
+					//"image_url": "https://www.visitljubljana.com/assets/gallery/flow.jpg",
+
+					"buttons": [{
+
+						"type": "postback",
+
+						"title": "1",
+
+						"payload": "1" 
+					}, {
+						"type": "postback",
+
+						"title": "2",
+
+						"payload": "2"
+					}, {
+						"type": "postback",
+
+						"title": "3",
+
+						"payload": "3"
+					}],
+
+				}, {
+
+					"title": "Aantal kaartjes",
+
+					"subtitle": "Ga naar links voor een kleinere kaartkeuze!",
+
+					//"image_url": "https://www.visitljubljana.com/assets/gallery/flow.jpg",
+
+					"buttons": [{
+
+						"type": "postback",
+
+						"title": "4",
+
+						"payload": "4",
+					}, {
+						"type": "postback",
+
+						"title": "5",
+
+						"payload": "5"
+					}],
+
+				}]
+
+			}
+
+		}
+
+	}
+
+	request({
+
+		url: 'https://graph.facebook.com/v2.6/me/messages',
+
+		qs: { access_token: token },
+
+		method: 'POST',
+
+		json: {
+
+			recipient: { id: sender },
+
+			message: messageData,
+
+		}
+
+	}, function (error, response, body) {
+
+		if (error) {
+
+			console.log('Error sending messages: ', error)
+
+		} else if (response.body.error) {
+
+			console.log('Error: ', response.body.error)
+
+		}
+
+	})
+
 }
+
+
+function sendButtonMessage(sender, text) {
+	let messagedata = {
+		"message": {
+			"attachment": {
+				"type": "template",
+				"payload": {
+					"template_type": "button",
+					"text": text,
+					"buttons": [
+						{
+							"type": "web_url",
+							"title": "Vip",
+							"payload": "Leuk dat je Vip tickets wil bestellen ! Hoe veel wil je er bestellen?"
+						},
+						{
+							"type": "postback",
+							"title": "Regular",
+							"payload": "Leuk dat je regular tickets wil bestellen! Hoe veel wil je er bestellen?"
+						}
+					]
+				}
+			}
+		}
+	}
 }
 
 // spin spin sugar
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), function () {
 	console.log('running on port', app.get('port'))
 })
