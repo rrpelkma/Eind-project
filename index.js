@@ -64,7 +64,7 @@ app.post('/webhook/', function (req, res) {
 			let text = JSON.stringify(event.postback)
 			switch (event.postback.payload) {
 				case 'Regular':
-					//sendTextMessage(sender, "Hoe veel kaartjes zou je willen?")
+					sendTextMessage(sender, "Hoe veel kaartjes zou je willen?")
 					//sendGeneric3Message(sender)
 					sendQuickReply(sender)
 					break;
@@ -294,10 +294,10 @@ function sendGeneric2Message(sender) {
 
 }
 
-function sendQuickReply(recipientId){
+function sendQuickReply(sender){
 	var messageData = {
     recipient: {
-      id: recipientId
+      id: sender
     },
     message: {
       text: "What's your favorite movie genre?",
@@ -321,7 +321,37 @@ function sendQuickReply(recipientId){
     }
   };
 
-  //callSendAPI(messageData);
+
+  	request({
+
+		url: 'https://graph.facebook.com/v2.6/me/messages',
+
+		qs: { access_token: token },
+
+		method: 'POST',
+
+		json: {
+
+			recipient: { id: sender },
+
+			message: messageData,
+
+		}
+
+	}, function (error, response, body) {
+
+		if (error) {
+
+			console.log('Error sending messages: ', error)
+
+		} else if (response.body.error) {
+
+			console.log('Error: ', response.body.error)
+
+		}
+
+	})
+
 }
 
 /*
