@@ -295,9 +295,9 @@ function sendGeneric2Message(sender) {
 }
 
 function sendQuickReply(sender){
-//"let messageData" = {
- //  "message":{
-      //   "text":"Pick a color:",
+	let messageData = {
+   	"message":{
+         "text":"Pick a color:",
          "quick_replies":[
             {
                "content_type": "text",
@@ -310,8 +310,8 @@ function sendQuickReply(sender){
                "payload": "green"
             }
          ]
-     // }
-  // }	
+     }
+   }	
 } 
 
 /*
