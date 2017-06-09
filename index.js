@@ -295,7 +295,7 @@ function sendGeneric2Message(sender) {
 }
 
 function sendQuickReply(sender){
-	var messageData = {
+	let messageData = {
     recipient: {
       id: sender
     },
