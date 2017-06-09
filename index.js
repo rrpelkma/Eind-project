@@ -64,7 +64,7 @@ app.post('/webhook/', function (req, res) {
 			let text = JSON.stringify(event.postback)
 			switch (event.postback.payload) {
 				case 'Regular':
-					sendTextMessage(sender, "Hoe veel kaartjes zou je willen?")
+					//sendTextMessage(sender, "Hoe veel kaartjes zou je willen?")
 					//sendGeneric3Message(sender)
 					sendQuickReply(sender)
 					break;
