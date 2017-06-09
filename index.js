@@ -66,7 +66,7 @@ app.post('/webhook/', function (req, res) {
 				case 'Regular':
 					sendTextMessage(sender, "Hoe veel kaartjes zou je willen?")
 					//sendGeneric3Message(sender)
-					sendQuickReply(sender)
+					sendQuickReply(recipientId)
 					break;
 
 				case 'Vip':
@@ -294,30 +294,34 @@ function sendGeneric2Message(sender) {
 
 }
 
-function sendQuickReply(sender){
-	let messageData = {
-		"attachment":{
-		"type":"template",
-		"payload":{
-			"template_type": "quick_replies",
-   			"message":{
-         		"text":"Pick a color:",
-         	"quick_replies":[
-        		{
-              	 "content_type": "text",
-				 "title": "Red",
-				 "payload": "red"
-           		},
-           		 {
-              	  "content_type": "text",
-             	  "title": "Green",
-            	  "payload": "green"
-           		 }
-         		]
-    		 }
-  			}	
-		} 
-	}
+function sendQuickReply(recipientId){
+	var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      text: "What's your favorite movie genre?",
+      quick_replies: [
+        {
+          "content_type":"text",
+          "title":"Action",
+          "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_ACTION"
+        },
+        {
+          "content_type":"text",
+          "title":"Comedy",
+          "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_COMEDY"
+        },
+        {
+          "content_type":"text",
+          "title":"Drama",
+          "payload":"DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_DRAMA"
+        }
+      ]
+    }
+  };
+
+  callSendAPI(messageData);
 }
 
 /*
@@ -481,3 +485,28 @@ function sendButtonMessage(sender, text) {
 app.listen(app.get('port'), function () {
 	console.log('running on port', app.get('port'))
 })
+
+function callSendAPI(messageData) {
+  request({
+    uri: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: { access_token: PAGE_ACCESS_TOKEN },
+    method: 'POST',
+    json: messageData
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var recipientId = body.recipient_id;
+      var messageId = body.message_id;
+
+      if (messageId) {
+        console.log("Successfully sent message with id %s to recipient %s", 
+          messageId, recipientId);
+      } else {
+      console.log("Successfully called Send API for recipient %s", 
+        recipientId);
+      }
+    } else {
+      console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
+    }
+  });  
+}
