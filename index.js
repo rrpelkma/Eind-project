@@ -15,7 +15,7 @@ app.use(bodyParser.json())
 
 // index
 app.get('/', function (req, res) {
-	res.send('hello world i am a secret bot')
+	res.send('hello world i am a secret bot, Het werkt')
 })
 
 // for facebook verification
@@ -317,7 +317,7 @@ function sendQuickReply(sender){
    		 ]
  		}
 	}
-}
+} "https://graph.facebook.com/v2.6/me/messages?access_token=PAGE_ACCESS_TOKEN" 
 
 /*
 function sendQuickReply(sender) {
