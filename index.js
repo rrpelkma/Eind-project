@@ -294,10 +294,10 @@ function sendGeneric2Message(sender) {
 
 }
 
-function sendQuickReply(recipientId){
+function sendQuickReply(sender){
 	var messageData = {
     recipient: {
-      id: recipientId
+      id: sender
     },
     message: {
       text: "What's your favorite movie genre?",
